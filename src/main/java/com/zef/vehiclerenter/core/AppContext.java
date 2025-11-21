@@ -7,6 +7,9 @@ import com.zef.vehiclerenter.services.VehicleService;
 import com.zef.vehiclerenter.services.RentalService;
 import com.zef.vehiclerenter.services.AdminService;
 import org.jooq.DSLContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.binding.BooleanBinding;
 
 import javax.sql.DataSource;
 
@@ -22,15 +25,24 @@ public final class AppContext {
     private final AdminService adminService;
     private final AuthService authService;
 
-    // Menampung data admin yang sedang login (jika ada)
-    private Admin currentAdmin;
+    // Menampung data admin yang sedang login (jika ada) sebagai property agar bisa di-bind di UI
+    private final ObjectProperty<Admin> currentAdmin = new SimpleObjectProperty<>(null);
 
     private void setCurrentAdmin(Admin admin) {
-        this.currentAdmin = admin;
+        this.currentAdmin.set(admin);
     }
 
     public Admin getCurrentAdmin() {
+        return currentAdmin.get();
+    }
+
+    public ObjectProperty<Admin> currentAdminProperty() {
         return currentAdmin;
+    }
+
+    // BooleanBinding untuk kemudahan binding di UI (logged in = currentAdmin != null)
+    public BooleanBinding loggedInProperty() {
+        return currentAdmin.isNotNull();
     }
 
     /**
@@ -38,7 +50,7 @@ public final class AppContext {
      * @return `true` jika ada, `false` jika tidak
      */
     public boolean isLoggedIn() {
-        return currentAdmin != null;
+        return currentAdmin.get() != null;
     }
 
     /**
