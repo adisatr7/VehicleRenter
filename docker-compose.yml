@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: vehiclerenter
       POSTGRES_PASSWORD: secret123
-      POSTGRES_DB: vehiclerenterdb
+      POSTGRES_DB: vehicle_renter_db
     ports:
       - "5432:5432"
     volumes:
