@@ -1,6 +1,8 @@
 package com.zef.vehiclerenter.models.vehicles;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -8,15 +10,30 @@ public abstract class VehicleBase {
     protected UUID id;
     protected String name;
     protected String plateNumber;
-    protected double dailyRate;
+    protected BigDecimal dailyRate;
     protected VehicleType type = null;
 
-    public VehicleBase(UUID id, String name, String plateNumber, double dailyRate, VehicleType type) {
+    protected OffsetDateTime createdAt = OffsetDateTime.now();
+    protected OffsetDateTime updatedAt = OffsetDateTime.now();
+    protected OffsetDateTime deletedAt = null;
+
+    public VehicleBase(UUID id, String name, String plateNumber, BigDecimal dailyRate, VehicleType type) {
         this.id = id;
         this.name = name;
         this.plateNumber = plateNumber;
         this.dailyRate = dailyRate;
         this.type = type;
+    }
+
+    public VehicleBase(UUID id, String name, String plateNumber, BigDecimal dailyRate, VehicleType type, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+        this(id, name, plateNumber, dailyRate, type);
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public VehicleBase(UUID id, String name, String plateNumber, BigDecimal dailyRate, VehicleType type, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime deletedAt) {
+        this(id, name, plateNumber, dailyRate, type, createdAt, updatedAt);
+        this.deletedAt = deletedAt;
     }
 
     /**
@@ -32,19 +49,7 @@ public abstract class VehicleBase {
         if (days <= 0) {
             days = 1;
         }
-        return days * dailyRate;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPlateNumber(String plateNumber) {
-        this.plateNumber = plateNumber;
-    }
-
-    public void setDailyRate(double dailyRate) {
-        this.dailyRate = dailyRate;
+        return days * dailyRate.doubleValue();
     }
 
     public UUID getId() {
@@ -59,11 +64,23 @@ public abstract class VehicleBase {
         return plateNumber;
     }
 
-    public double getDailyRate() {
+    public BigDecimal getDailyRate() {
         return dailyRate;
     }
 
     public VehicleType getType() {
         return type;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public OffsetDateTime getDeletedAt() {
+        return deletedAt;
     }
 }
