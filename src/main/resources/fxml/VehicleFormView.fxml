@@ -33,13 +33,6 @@
         <!-- Form fields -->
         <VBox spacing="10.0">
           <children>
-            <!-- Tipe Kendaraan -->
-            <Label text="Tipe Kendaraan" textFill="#374151">
-              <font>
-                <Font size="13.0"/>
-              </font>
-            </Label>
-            <ComboBox fx:id="vehicleTypeCombo" promptText="Pilih tipe kendaraan" prefWidth="200" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-border-width: 1;"/>
             <!-- Nama Kendaraan -->
             <Label text="Nama Kendaraan" textFill="#374151">
               <font>
@@ -61,6 +54,13 @@
               </font>
             </Label>
             <TextField fx:id="dailyRateField" promptText="Contoh: 350000" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 10;"/>
+            <!-- Tipe Kendaraan -->
+            <Label text="Tipe Kendaraan" textFill="#374151">
+              <font>
+                <Font size="13.0"/>
+              </font>
+            </Label>
+            <ComboBox fx:id="vehicleTypeCombo" promptText="Pilih tipe kendaraan" prefWidth="200" style="-fx-background-radius: 8; -fx-border-color: #D1D5DB; -fx-border-radius: 8; -fx-border-width: 1;"/>
             <!-- Car-specific fields -->
             <VBox fx:id="carFieldsContainer" spacing="10.0" visible="false" managed="false">
               <children>

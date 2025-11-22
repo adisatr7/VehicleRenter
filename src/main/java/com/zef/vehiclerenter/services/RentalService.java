@@ -10,6 +10,7 @@ import com.zef.vehiclerenter.models.vehicles.Bike;
 import com.zef.vehiclerenter.models.vehicles.VehicleType;
 import org.jooq.DSLContext;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -68,6 +69,8 @@ public class RentalService {
      * @param renterName Penyewa kendaraan
      * @param renterIdNumber NIK penyewa kendaraan
      * @param renterPhoneNumber No HP penyewa kendaraan
+     * @param startDate Tanggal mulai sewa
+     * @param endDate Tanggal selesai sewa
      *
      * @return Data rentalan yang baru dibuat
      */
@@ -75,7 +78,9 @@ public class RentalService {
             UUID vehicleId,
             String renterName,
             String renterIdNumber,
-            String renterPhoneNumber
+            String renterPhoneNumber,
+            LocalDate startDate,
+            LocalDate endDate
     ) {
         // Pastikan kendaraan yang ingin disewa benar-benar ada di database
         VehicleBase vehicle = vehicleService.getById(vehicleId);
@@ -91,6 +96,8 @@ public class RentalService {
                 .set(RENTALS.RENTER_NAME, renterName)
                 .set(RENTALS.RENTER_ID_NUMBER, renterIdNumber)
                 .set(RENTALS.RENTER_PHONE_NUMBER, renterPhoneNumber)
+                .set(RENTALS.START_DATE, startDate)
+                .set(RENTALS.END_DATE, endDate)
                 .returning()
                 .fetchOne();
 
@@ -181,6 +188,8 @@ public class RentalService {
                 record.getRenterName(),
                 record.getRenterIdNumber(),
                 record.getRenterPhoneNumber(),
+                record.getStartDate(),
+                record.getEndDate(),
                 toDomainStatus(record.getStatus()),
                 record.getCreatedAt(),
                 record.getUpdatedAt(),

@@ -1,6 +1,7 @@
 package com.zef.vehiclerenter.models;
 
 import com.zef.vehiclerenter.models.vehicles.VehicleBase;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -12,6 +13,8 @@ public class Rental {
     private final String renterName;
     private final String renterIdNumber;
     private final String renterPhoneNumber;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
     private OffsetDateTime createdAt = OffsetDateTime.now();
     private OffsetDateTime updatedAt = OffsetDateTime.now();
@@ -22,13 +25,17 @@ public class Rental {
             VehicleBase vehicle,
             String renterName,
             String renterIdNumber,
-            String renterPhoneNumber
+            String renterPhoneNumber,
+            LocalDate startDate,
+            LocalDate endDate
     ) {
         this.id = id;
         this.vehicle = vehicle;
         this.renterName = renterName;
         this.renterIdNumber = renterIdNumber;
         this.renterPhoneNumber = renterPhoneNumber;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.status = RentalStatus.PENDING;
     }
 
@@ -38,9 +45,11 @@ public class Rental {
             String renterName,
             String renterIdNumber,
             String renterPhoneNumber,
+            LocalDate startDate,
+            LocalDate endDate,
             RentalStatus status
     ) {
-        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber);
+        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber, startDate, endDate);
         this.status = status;
     }
 
@@ -50,11 +59,13 @@ public class Rental {
             String renterName,
             String renterIdNumber,
             String renterPhoneNumber,
+            LocalDate startDate,
+            LocalDate endDate,
             RentalStatus status,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt
     ) {
-        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber, status);
+        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber, startDate, endDate, status);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -65,12 +76,14 @@ public class Rental {
             String renterName,
             String renterIdNumber,
             String renterPhoneNumber,
+            LocalDate startDate,
+            LocalDate endDate,
             RentalStatus status,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             OffsetDateTime deletedAt
     ) {
-        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber, status, createdAt, updatedAt);
+        this(id, vehicle, renterName, renterIdNumber, renterPhoneNumber, startDate, endDate, status, createdAt, updatedAt);
         this.deletedAt = deletedAt;
     }
 
@@ -108,5 +121,13 @@ public class Rental {
 
     public OffsetDateTime getDeletedAt() {
         return deletedAt;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 }

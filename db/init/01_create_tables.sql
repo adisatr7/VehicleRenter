@@ -72,6 +72,8 @@ CREATE TABLE IF NOT EXISTS rentals (
     renter_name         VARCHAR(100) NOT NULL,
     renter_id_number    VARCHAR(50) NOT NULL,
     renter_phone_number VARCHAR(20),
+    start_date          DATE NOT NULL,
+    end_date            DATE NOT NULL,
 
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ DEFAULT NOW(),

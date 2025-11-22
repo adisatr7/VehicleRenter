@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class RentalsController {
     @FXML private Label titleLabel;
     @FXML private TableView<Rental> rentalTable;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     @FXML
     public void initialize() {
@@ -70,15 +71,18 @@ public class RentalsController {
         });
         statusCol.setPrefWidth(120);
 
-        // Kolom Tanggal Diajukan
-        TableColumn<Rental, String> createdAtCol = new TableColumn<>("Tanggal Diajukan");
-        createdAtCol.setCellValueFactory(cell -> {
-            if (cell.getValue().getCreatedAt() != null) {
-                return new SimpleStringProperty(cell.getValue().getCreatedAt().format(DATE_FORMATTER));
+        // Kolom Sewa
+        TableColumn<Rental, String> rentDateCol = new TableColumn<>("Tanggal Sewa");
+        rentDateCol.setCellValueFactory(cell -> {
+            LocalDate startDate = cell.getValue().getStartDate();
+            LocalDate endDate = cell.getValue().getEndDate();
+
+            if (startDate != null && endDate != null) {
+                return new SimpleStringProperty(startDate.format(DATE_FORMATTER) + " - " + endDate.format(DATE_FORMATTER));
             }
             return new SimpleStringProperty("");
         });
-        createdAtCol.setPrefWidth(150);
+        rentDateCol.setPrefWidth(150);
 
         // Kolom aksi dengan tombol sesuai status rental
         TableColumn<Rental, Void> actionCol = new TableColumn<>("Aksi");
@@ -138,7 +142,7 @@ public class RentalsController {
             }
         });
 
-        rentalTable.getColumns().setAll(renterNameCol, renterIdCol, renterPhoneCol, vehicleCol, statusCol, createdAtCol, actionCol);
+        rentalTable.getColumns().setAll(renterNameCol, renterIdCol, renterPhoneCol, vehicleCol, statusCol, rentDateCol, actionCol);
 
         loadRentals();
     }
