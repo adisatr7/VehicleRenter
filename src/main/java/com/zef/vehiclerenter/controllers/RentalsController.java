@@ -62,7 +62,7 @@ public class RentalsController {
             RentalStatus status = cell.getValue().getStatus();
             String statusText = switch (status) {
                 case PENDING -> "Pending";
-                case RENTING -> "Disewa";
+                case RENTING -> "Sedang Disewa";
                 case RETURNED -> "Dikembalikan";
                 case REJECTED -> "Ditolak";
             };
@@ -86,7 +86,7 @@ public class RentalsController {
         actionCol.setCellFactory(col -> new TableCell<>() {
             private final Button approveButton = new Button("Setujui");
             private final Button rejectButton = new Button("Tolak");
-            private final Button returnButton = new Button("Selesai Sewa");
+            private final Button returnButton = new Button("Selesai");
             private final HBox pendingContainer = new HBox(8, approveButton, rejectButton);
             private final HBox rentingContainer = new HBox(8, returnButton);
 
