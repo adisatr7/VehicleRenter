@@ -39,7 +39,7 @@ public class VehicleService {
         var unavailableVehicleIds = db.select(RENTALS.VEHICLE_ID)
                 .from(RENTALS)
                 .where(RENTALS.DELETED_AT.isNull()
-                .and(RENTALS.STATUS.eq(RentalStatus.RENTING)))
+                .and(RENTALS.STATUS.in(RentalStatus.RENTING, RentalStatus.PENDING)))
                 .fetchSet(RENTALS.VEHICLE_ID);
 
         return vehicleRecords.stream()
