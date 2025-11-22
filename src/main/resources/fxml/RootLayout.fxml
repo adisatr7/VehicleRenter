@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane id="root-layout" dividerPositions="0.24921752738654146" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zef.vehiclerenter.controllers.RootLayoutController">
+<SplitPane id="root-layout" dividerPositions="0.25" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zef.vehiclerenter.controllers.RootLayoutController">
   <items>
-    <BorderPane id="sidebar" style="-fx-background-color: #2E294E;">
+    <BorderPane id="sidebar" style="-fx-background-color: #2E294E;" SplitPane.resizableWithParent="false">
       <top>
-        <VBox prefWidth="286.0" spacing="12.0" BorderPane.alignment="CENTER">
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
           <children>
             <Label fx:id="sidebarTitleLabel" text="Vehicle Rent App" textFill="WHITE">
               <font>
@@ -45,7 +45,7 @@
       </top>
 
       <bottom>
-        <VBox prefWidth="100.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER_LEFT">
+        <VBox style="-fx-background-color: transparent;" BorderPane.alignment="CENTER_LEFT">
           <children>
             <Hyperlink id="sidebar-login" fx:id="sidebarLoginHyperlink" onAction="#handleLogin" text="Admin Login" textFill="WHITE">
               <font>
