@@ -40,6 +40,11 @@
                 <Font size="18.0"/>
               </font>
             </Hyperlink>
+            <Hyperlink id="sidebar-go-to-admins-view" fx:id="sidebarGoToAdminsHyperlink" onAction="#handleGoToAdminsView" text="Kelola Admin" textFill="WHITE">
+              <font>
+                <Font size="18.0"/>
+              </font>
+            </Hyperlink>
           </children>
         </VBox>
       </top>

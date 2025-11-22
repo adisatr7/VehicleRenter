@@ -33,6 +33,9 @@ public final class AppContext {
     // Menampung ID kendaraan yang dipilih untuk disewa
     private final ObjectProperty<java.util.UUID> selectedVehicleId = new SimpleObjectProperty<>(null);
 
+    // Menampung ID admin yang dipilih untuk diedit
+    private final ObjectProperty<java.util.UUID> selectedAdminId = new SimpleObjectProperty<>(null);
+
     // Trigger untuk memaksa UI me-refresh data
     private final IntegerProperty dataVersionProperty = new SimpleIntegerProperty(0);
 
@@ -50,6 +53,18 @@ public final class AppContext {
 
     public ObjectProperty<java.util.UUID> selectedVehicleIdProperty() {
         return selectedVehicleId;
+    }
+
+    public java.util.UUID getSelectedAdminId() {
+        return selectedAdminId.get();
+    }
+
+    public void setSelectedAdminId(java.util.UUID id) {
+        this.selectedAdminId.set(id);
+    }
+
+    public ObjectProperty<java.util.UUID> selectedAdminIdProperty() {
+        return selectedAdminId;
     }
 
     public javafx.beans.property.IntegerProperty dataVersionProperty() {

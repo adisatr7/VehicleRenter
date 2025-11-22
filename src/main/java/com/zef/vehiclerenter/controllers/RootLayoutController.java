@@ -21,6 +21,7 @@ public class RootLayoutController {
 
     @FXML private Hyperlink sidebarGoToVehiclesHyperlink;
     @FXML private Hyperlink sidebarGoToRentalHyperlink;
+    @FXML private Hyperlink sidebarGoToAdminsHyperlink;
     @FXML private Hyperlink sidebarLoginHyperlink;
     @FXML private Hyperlink sidebarLogoutHyperlink;
     @FXML private Label sidebarTitleLabel;
@@ -41,6 +42,10 @@ public class RootLayoutController {
         // Sembunyikan navigasi ke halaman Rental jika belum login
         sidebarGoToRentalHyperlink.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
         sidebarGoToRentalHyperlink.managedProperty().bind(sidebarGoToRentalHyperlink.visibleProperty());
+
+        // Sembunyikan navigasi ke halaman Kelola Admin jika belum login
+        sidebarGoToAdminsHyperlink.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
+        sidebarGoToAdminsHyperlink.managedProperty().bind(sidebarGoToAdminsHyperlink.visibleProperty());
     }
 
     /**
@@ -55,6 +60,13 @@ public class RootLayoutController {
      */
     public void handleGoToRentalView() {
         Router.get().navigate(Routes.RENTALS);
+    }
+
+    /**
+     * Fungsi untuk membuka halaman kelola admin
+     */
+    public void handleGoToAdminsView() {
+        Router.get().navigate(Routes.ADMINS);
     }
 
     /**

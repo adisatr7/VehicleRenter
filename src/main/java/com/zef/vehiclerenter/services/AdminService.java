@@ -84,6 +84,36 @@ public class AdminService {
     }
 
     /**
+     * Update data admin (nama dan email)
+     *
+     * @param adminId ID admin yang akan diupdate
+     * @param name Nama baru
+     * @param email Email baru
+     */
+    public void update(UUID adminId, String name, String email) {
+        db.update(ADMINS)
+                .set(ADMINS.FULLNAME, name)
+                .set(ADMINS.EMAIL, email)
+                .where(ADMINS.ID.eq(adminId)
+                        .and(ADMINS.DELETED_AT.isNull()))
+                .execute();
+    }
+
+    /**
+     * Update password admin
+     *
+     * @param adminId ID admin yang akan diupdate passwordnya
+     * @param passwordHash Password baru yang sudah dienkripsi
+     */
+    public void updatePassword(UUID adminId, String passwordHash) {
+        db.update(ADMINS)
+                .set(ADMINS.PASSWORD_HASH, passwordHash)
+                .where(ADMINS.ID.eq(adminId)
+                        .and(ADMINS.DELETED_AT.isNull()))
+                .execute();
+    }
+
+    /**
      * Konversi data admin polos dari database agar bisa digunakan oleh aplikasi
      *
      * @param record Data admin polos dari database

@@ -24,6 +24,8 @@ public class Router {
         routes.put(Routes.VEHICLE_FORM, "/fxml/VehicleFormView.fxml");
         routes.put(Routes.RENT_FORM, "/fxml/RentFormView.fxml");
         routes.put(Routes.RENTALS, "/fxml/RentalsView.fxml");
+        routes.put(Routes.ADMINS, "/fxml/AdminsView.fxml");
+        routes.put(Routes.ADMIN_FORM, "/fxml/AdminFormView.fxml");
         routes.put(Routes.LOGIN, "/fxml/LoginView.fxml");
     }
 
