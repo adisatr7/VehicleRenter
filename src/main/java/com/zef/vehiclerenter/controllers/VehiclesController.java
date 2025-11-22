@@ -117,7 +117,7 @@ public class VehiclesController {
         TableColumn<VehicleBase, String> rateCol = new TableColumn<>("Tarif Harian");
         rateCol.setCellValueFactory(cell -> {
             // Format mata uang ke Rupiah Indonesia, lebih mudah dibaca dengan pemisah ribuan dan tanpa desimal
-            NumberFormat rupiahFmt = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            NumberFormat rupiahFmt = NumberFormat.getCurrencyInstance(Locale.of("id", "ID"));
             rupiahFmt.setMaximumFractionDigits(0);
             java.math.BigDecimal rate = cell.getValue().getDailyRate();
             String formatted = rupiahFmt.format(rate);
@@ -142,48 +142,32 @@ public class VehiclesController {
         });
         availabilityCol.setPrefWidth(120);
 
-        // Kolom atribut spesifik tipe kendaraan
-        // Kolom Kursi (Mobil) / CC (Motor)
-        TableColumn<VehicleBase, String> specificCol1 = new TableColumn<>("Kursi/CC");
-        specificCol1.setCellValueFactory(cell -> {
+        // Kolom keterangan (atribut spesifik kendaraan)
+        TableColumn<VehicleBase, String> descriptionCol = new TableColumn<>("Keterangan");
+        descriptionCol.setCellValueFactory(cell -> {
             VehicleBase vehicle = cell.getValue();
             if (vehicle instanceof Car) {
+                // Untuk mobil, tampilkan jumlah pintu, kursi, dan transmisi
                 Car car = (Car) vehicle;
-                return new SimpleStringProperty(car.getSeatCount() + " kursi");
+                String transmission = car.isHasAutoTransmission() ? "Matic" : "Manual";
+                return new SimpleStringProperty(
+                    car.getDoorCount() + " pintu, " +
+                    car.getSeatCount() + " kursi, " +
+                    transmission
+                );
             } else if (vehicle instanceof Bike) {
+                // Untuk motor, tampilkan cc dan apakah ada top box
                 Bike bike = (Bike) vehicle;
-                return new SimpleStringProperty(bike.getEngineCc() + " cc");
+                String topBox = bike.isHasTopBox()
+                    ? "ada bagasi tambahan"
+                    : "tidak ada bagasi tambahan";
+                return new SimpleStringProperty(
+                    "CC " + bike.getEngineCc() + ", " + topBox
+                );
             }
             return new SimpleStringProperty("-");
         });
-        specificCol1.setPrefWidth(100);
-
-        // Kolom Pintu (Mobil) / Box (Motor)
-        TableColumn<VehicleBase, String> specificCol2 = new TableColumn<>("Pintu/Box");
-        specificCol2.setCellValueFactory(cell -> {
-            VehicleBase vehicle = cell.getValue();
-            if (vehicle instanceof Car) {
-                Car car = (Car) vehicle;
-                return new SimpleStringProperty(car.getDoorCount() + " pintu");
-            } else if (vehicle instanceof Bike) {
-                Bike bike = (Bike) vehicle;
-                return new SimpleStringProperty(bike.isHasTopBox() ? "Ada box" : "Tanpa box");
-            }
-            return new SimpleStringProperty("-");
-        });
-        specificCol2.setPrefWidth(100);
-
-        // Kolom Transmisi (hanya Mobil)
-        TableColumn<VehicleBase, String> transmissionCol = new TableColumn<>("Transmisi");
-        transmissionCol.setCellValueFactory(cell -> {
-            VehicleBase vehicle = cell.getValue();
-            if (vehicle instanceof Car) {
-                Car car = (Car) vehicle;
-                return new SimpleStringProperty(car.isHasAutoTransmission() ? "Otomatis" : "Manual");
-            }
-            return new SimpleStringProperty("-");
-        });
-        transmissionCol.setPrefWidth(100);
+        descriptionCol.setPrefWidth(250);
 
         // Kolom aksi dengan tombol Sewa dan Edit (admin-only)
         TableColumn<VehicleBase, Void> actionCol = new TableColumn<>("Aksi");
@@ -234,7 +218,7 @@ public class VehiclesController {
         });
 
         // Muat data kendaraan dari AppContext
-        vehicleTable.getColumns().setAll(nameCol, plateCol, typeCol, rateCol, specificCol1, specificCol2, transmissionCol, availabilityCol, actionCol);
+        vehicleTable.getColumns().setAll(nameCol, plateCol, typeCol, rateCol, descriptionCol, availabilityCol, actionCol);
         ObservableList<VehicleBase> items = FXCollections.observableArrayList(vehicles);
         vehicleTable.setItems(items);
 
