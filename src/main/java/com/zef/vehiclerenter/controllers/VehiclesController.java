@@ -132,7 +132,7 @@ public class VehiclesController {
         availabilityCol.setCellValueFactory(cell -> {
             java.util.UUID vehicleId = cell.getValue().getId();
             if (rentedIds.contains(vehicleId)) {
-                return new SimpleStringProperty("Disewa");
+                return new SimpleStringProperty("Sedang Disewa");
             } else if (bookedIds.contains(vehicleId)) {
                 return new SimpleStringProperty("Booked");
             } else {
@@ -211,6 +211,9 @@ public class VehiclesController {
                     boolean isUnavailable = rentedIds.contains(vehicle.getId()) || bookedIds.contains(vehicle.getId());
                     rentButton.setVisible(!isUnavailable);
                     rentButton.setManaged(!isUnavailable);
+                    // Sembunyikan tombol Edit jika kendaraan sedang disewa atau booked
+                    editButton.setVisible(!isUnavailable);
+                    editButton.setManaged(!isUnavailable);
                     setGraphic(container);
                 }
             }
