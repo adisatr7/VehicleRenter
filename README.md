@@ -154,6 +154,8 @@ brew install maven
 
 ### Untuk Pelanggan (Penyewa)
 
+![x](docs/customer.webp)
+
 1. **Lihat Kendaraan**:
    - Buka aplikasi (tidak perlu login)
    - Lihat daftar kendaraan yang tersedia
@@ -164,6 +166,9 @@ brew install maven
    - Tunggu persetujuan dari admin
 
 ### Untuk Admin
+
+![x](docs/admin-1.webp)
+![x](docs/admin-2.webp)
 
 1. **Login** dengan kredensial admin
    - Email: `admin@local.dev`
