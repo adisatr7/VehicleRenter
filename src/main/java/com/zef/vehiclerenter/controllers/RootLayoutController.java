@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import com.zef.vehiclerenter.core.AppConfig;
 
 /**
  * Controller untuk layout utama yang memiliki sidebar dan area konten dinamis.
@@ -21,10 +23,14 @@ public class RootLayoutController {
     @FXML private Hyperlink sidebarGoToRentalHyperlink;
     @FXML private Hyperlink sidebarLoginHyperlink;
     @FXML private Hyperlink sidebarLogoutHyperlink;
+    @FXML private Label sidebarTitleLabel;
     @FXML private AnchorPane sceneContainerInner;
 
     @FXML
     public void initialize() {
+        if (sidebarTitleLabel != null) {
+            sidebarTitleLabel.setText(AppConfig.JUDUL_APLIKASI);
+        }
         // Bind visibility: tunjukkan login jika tidak ada admin, sebaliknya logout jika ada admin
         sidebarLoginHyperlink.visibleProperty().bind(AppContext.get().currentAdminProperty().isNull());
         sidebarLoginHyperlink.managedProperty().bind(sidebarLoginHyperlink.visibleProperty());
