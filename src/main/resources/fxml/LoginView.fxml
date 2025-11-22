@@ -66,7 +66,7 @@
                 </PasswordField>
               </children>
             </VBox>
-            <!-- Error message label (hidden by default) -->
+            <!-- Error message label -->
             <Label fx:id="errorLabel" managed="false" textFill="#DC2626" visible="false" wrapText="true">
               <font>
                 <Font size="13.0"/>
