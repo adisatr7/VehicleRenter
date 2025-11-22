@@ -151,7 +151,6 @@ public class VehicleService {
         if (vehicle instanceof Car) {
             Car car = (Car) vehicle;
             db.insertInto(VEHICLES)
-                    .set(VEHICLES.ID, UUID.randomUUID())
                     .set(VEHICLES.NAME, car.getName())
                     .set(VEHICLES.PLATE_NUMBER, car.getPlateNumber())
                     .set(VEHICLES.DAILY_RATE, car.getDailyRate())
@@ -163,7 +162,6 @@ public class VehicleService {
         } else if (vehicle instanceof Bike) {
             Bike bike = (Bike) vehicle;
             db.insertInto(VEHICLES)
-                    .set(VEHICLES.ID, UUID.randomUUID())
                     .set(VEHICLES.NAME, bike.getName())
                     .set(VEHICLES.PLATE_NUMBER, bike.getPlateNumber())
                     .set(VEHICLES.DAILY_RATE, bike.getDailyRate())
