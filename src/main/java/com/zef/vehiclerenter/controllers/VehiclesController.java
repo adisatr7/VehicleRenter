@@ -89,15 +89,14 @@ public class VehiclesController {
                 .collect(Collectors.toSet());
 
         // Siapkan kolom tabel kendaraan
-        // Kolom nama
+        // Kolom nama dan plat kendaraan
         TableColumn<VehicleBase, String> nameCol = new TableColumn<>("Nama");
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setCellValueFactory(cell -> {
+            String name = cell.getValue().getName();
+            String plate = cell.getValue().getPlateNumber();
+            return new SimpleStringProperty(name + " (" + plate + ")");
+        });
         nameCol.setPrefWidth(200);
-
-        // Kolom plat nomor
-        TableColumn<VehicleBase, String> plateCol = new TableColumn<>("Plat Nomor");
-        plateCol.setCellValueFactory(new PropertyValueFactory<>("plateNumber"));
-        plateCol.setPrefWidth(120);
 
         // Kolom tipe kendaraan
         TableColumn<VehicleBase, String> typeCol = new TableColumn<>("Tipe");
@@ -218,7 +217,7 @@ public class VehiclesController {
         });
 
         // Muat data kendaraan dari AppContext
-        vehicleTable.getColumns().setAll(nameCol, plateCol, typeCol, rateCol, descriptionCol, availabilityCol, actionCol);
+        vehicleTable.getColumns().setAll(nameCol, typeCol, rateCol, descriptionCol, availabilityCol, actionCol);
         ObservableList<VehicleBase> items = FXCollections.observableArrayList(vehicles);
         vehicleTable.setItems(items);
 
