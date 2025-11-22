@@ -26,7 +26,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
 
@@ -194,10 +193,6 @@ public class VehiclesController {
                     AppContext.get().setSelectedVehicleId(vehicle.getId());
                     Router.get().navigate(Routes.VEHICLE_FORM);
                 });
-
-                // Tombol Edit hanya untuk admin saja
-                editButton.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
-                editButton.managedProperty().bind(editButton.visibleProperty());
             }
 
             @Override
@@ -211,9 +206,13 @@ public class VehiclesController {
                     boolean isUnavailable = rentedIds.contains(vehicle.getId()) || bookedIds.contains(vehicle.getId());
                     rentButton.setVisible(!isUnavailable);
                     rentButton.setManaged(!isUnavailable);
-                    // Sembunyikan tombol Edit jika kendaraan sedang disewa atau booked
-                    editButton.setVisible(!isUnavailable);
-                    editButton.setManaged(!isUnavailable);
+
+                    // Tombol Edit hanya muncul jika: 1) user adalah admin, 2) kendaraan tidak sedang disewa/booked
+                    boolean isAdmin = AppContext.get().getCurrentAdmin() != null;
+                    boolean canEdit = isAdmin && !isUnavailable;
+                    editButton.setVisible(canEdit);
+                    editButton.setManaged(canEdit);
+
                     setGraphic(container);
                 }
             }
