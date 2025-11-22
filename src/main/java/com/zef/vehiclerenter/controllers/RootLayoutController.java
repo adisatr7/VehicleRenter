@@ -37,6 +37,10 @@ public class RootLayoutController {
 
         sidebarLogoutHyperlink.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
         sidebarLogoutHyperlink.managedProperty().bind(sidebarLogoutHyperlink.visibleProperty());
+
+        // Sembunyikan navigasi ke halaman Rental jika belum login
+        sidebarGoToRentalHyperlink.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
+        sidebarGoToRentalHyperlink.managedProperty().bind(sidebarGoToRentalHyperlink.visibleProperty());
     }
 
     /**
