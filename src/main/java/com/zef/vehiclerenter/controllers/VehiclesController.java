@@ -1,7 +1,24 @@
 package com.zef.vehiclerenter.controllers;
 
 import com.zef.vehiclerenter.core.AppContext;
+import com.zef.vehiclerenter.core.Router;
+import com.zef.vehiclerenter.routes.Routes;
 import com.zef.vehiclerenter.models.vehicles.VehicleBase;
+import com.zef.vehiclerenter.models.vehicles.Car;
+import com.zef.vehiclerenter.models.vehicles.Bike;
+import com.zef.vehiclerenter.models.Rental;
+import com.zef.vehiclerenter.models.RentalStatus;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.TableCell;
+import java.text.NumberFormat;
+import java.util.Locale;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,34 +33,235 @@ import java.util.List;
 public class VehiclesController {
     @FXML private Label titleLabel;
     @FXML private TableView<VehicleBase> vehicleTable;
+    @FXML private Button addVehicleButton;
+    @FXML private Button refreshButton;
 
     @FXML
     public void initialize() {
+        loadVehicles();
+
+        // Tombol Tambah Kendaraan hanya untuk admin
+        addVehicleButton.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
+        addVehicleButton.managedProperty().bind(addVehicleButton.visibleProperty());
+
+        // Handler tombol refresh
+        refreshButton.setOnAction(e -> refresh());
+
+        // Handler tombol tambah kendaraan
+        addVehicleButton.setOnAction(e -> handleAddVehicle());
+
+        // Listen for data changes and refresh table when notified
+        AppContext.get().dataVersionProperty().addListener((obs, oldVal, newVal) -> {
+            refresh();
+        });
+    }
+
+    /**
+     * Tombol tambah kendaraan baru (khusus admin)
+     */
+    private void handleAddVehicle() {
+        AppContext.get().setSelectedVehicleId(null);
+        Router.get().navigate(Routes.VEHICLE_FORM);
+    }
+
+    /**
+     * Ambil data kendaraan dari database dan tampilkan di tabel
+     */
+    private void loadVehicles() {
+        // Muat data kendaraan dan rental terlebih dahulu
+        List<VehicleBase> vehicles = AppContext.get().vehicles().getAll();
+        List<Rental> rentals = AppContext.get().rentals().getAll();
+
+        // Hitung kumpulan ID kendaraan yang saat ini berstatus RENTING
+        final Set<java.util.UUID> rentedIds = rentals.stream()
+                .filter(r -> r != null && r.getStatus() == RentalStatus.RENTING)
+                .map(Rental::getVehicle)
+                .filter(Objects::nonNull)
+                .map(VehicleBase::getId)
+                .collect(Collectors.toSet());
+
+        // Hitung kumpulan ID kendaraan yang saat ini berstatus PENDING (booked)
+        final Set<java.util.UUID> bookedIds = rentals.stream()
+                .filter(r -> r != null && r.getStatus() == RentalStatus.PENDING)
+                .map(Rental::getVehicle)
+                .filter(Objects::nonNull)
+                .map(VehicleBase::getId)
+                .collect(Collectors.toSet());
+
         // Siapkan kolom tabel kendaraan
+        // Kolom nama
         TableColumn<VehicleBase, String> nameCol = new TableColumn<>("Nama");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setPrefWidth(200);
 
+        // Kolom plat nomor
         TableColumn<VehicleBase, String> plateCol = new TableColumn<>("Plat Nomor");
         plateCol.setCellValueFactory(new PropertyValueFactory<>("plateNumber"));
         plateCol.setPrefWidth(120);
 
+        // Kolom tipe kendaraan
         TableColumn<VehicleBase, String> typeCol = new TableColumn<>("Tipe");
-        typeCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getType().name()));
+        typeCol.setCellValueFactory(cell -> {
+            // Konversi enum menjadi nama yang lebih ramah pengguna
+            String typeName = cell.getValue().getType().name();
+            if (typeName == "BIKE") {
+                typeName = "Motor";
+            } else if (typeName == "CAR") {
+                typeName = "Mobil";
+            }
+            return new SimpleStringProperty(typeName);
+        });
         typeCol.setPrefWidth(100);
 
+        // Kolom tarif
         TableColumn<VehicleBase, String> rateCol = new TableColumn<>("Tarif Harian");
         rateCol.setCellValueFactory(cell -> {
+            // Format mata uang ke Rupiah Indonesia, lebih mudah dibaca dengan pemisah ribuan dan tanpa desimal
+            NumberFormat rupiahFmt = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            rupiahFmt.setMaximumFractionDigits(0);
             java.math.BigDecimal rate = cell.getValue().getDailyRate();
-            return new SimpleStringProperty(String.format("Rp %.0f", rate.doubleValue()));
+            String formatted = rupiahFmt.format(rate);
+            if (!formatted.startsWith("Rp")) {
+                formatted = "Rp " + formatted.replaceAll("[^0-9,\\.]", "");
+            }
+            return new SimpleStringProperty(formatted);
         });
         rateCol.setPrefWidth(150);
 
-        vehicleTable.getColumns().setAll(nameCol, plateCol, typeCol, rateCol);
+        // Kolom ketersediaan
+        TableColumn<VehicleBase, String> availabilityCol = new TableColumn<>("Ketersediaan");
+        availabilityCol.setCellValueFactory(cell -> {
+            java.util.UUID vehicleId = cell.getValue().getId();
+            if (rentedIds.contains(vehicleId)) {
+                return new SimpleStringProperty("Disewa");
+            } else if (bookedIds.contains(vehicleId)) {
+                return new SimpleStringProperty("Booked");
+            } else {
+                return new SimpleStringProperty("Tersedia");
+            }
+        });
+        availabilityCol.setPrefWidth(120);
+
+        // Kolom atribut spesifik tipe kendaraan
+        // Kolom Kursi (Mobil) / CC (Motor)
+        TableColumn<VehicleBase, String> specificCol1 = new TableColumn<>("Kursi/CC");
+        specificCol1.setCellValueFactory(cell -> {
+            VehicleBase vehicle = cell.getValue();
+            if (vehicle instanceof Car) {
+                Car car = (Car) vehicle;
+                return new SimpleStringProperty(car.getSeatCount() + " kursi");
+            } else if (vehicle instanceof Bike) {
+                Bike bike = (Bike) vehicle;
+                return new SimpleStringProperty(bike.getEngineCc() + " cc");
+            }
+            return new SimpleStringProperty("-");
+        });
+        specificCol1.setPrefWidth(100);
+
+        // Kolom Pintu (Mobil) / Box (Motor)
+        TableColumn<VehicleBase, String> specificCol2 = new TableColumn<>("Pintu/Box");
+        specificCol2.setCellValueFactory(cell -> {
+            VehicleBase vehicle = cell.getValue();
+            if (vehicle instanceof Car) {
+                Car car = (Car) vehicle;
+                return new SimpleStringProperty(car.getDoorCount() + " pintu");
+            } else if (vehicle instanceof Bike) {
+                Bike bike = (Bike) vehicle;
+                return new SimpleStringProperty(bike.isHasTopBox() ? "Ada box" : "Tanpa box");
+            }
+            return new SimpleStringProperty("-");
+        });
+        specificCol2.setPrefWidth(100);
+
+        // Kolom Transmisi (hanya Mobil)
+        TableColumn<VehicleBase, String> transmissionCol = new TableColumn<>("Transmisi");
+        transmissionCol.setCellValueFactory(cell -> {
+            VehicleBase vehicle = cell.getValue();
+            if (vehicle instanceof Car) {
+                Car car = (Car) vehicle;
+                return new SimpleStringProperty(car.isHasAutoTransmission() ? "Otomatis" : "Manual");
+            }
+            return new SimpleStringProperty("-");
+        });
+        transmissionCol.setPrefWidth(100);
+
+        // Kolom aksi dengan tombol Sewa dan Edit (admin-only)
+        TableColumn<VehicleBase, Void> actionCol = new TableColumn<>("Aksi");
+        actionCol.setPrefWidth(180);
+        actionCol.setCellFactory(col -> new TableCell<>() {
+            private final Button rentButton = new Button("Sewa");
+            private final Button editButton = new Button("Edit");
+            private final HBox container = new HBox(8, rentButton, editButton);
+
+            {
+                container.setAlignment(Pos.CENTER);
+
+                // Tombol Sewa
+                rentButton.setStyle("-fx-background-color: #2E294E; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 6 12 6 12;");
+                rentButton.setOnAction(e -> {
+                    VehicleBase vehicle = getTableView().getItems().get(getIndex());
+                    AppContext.get().setSelectedVehicleId(vehicle.getId());
+                    Router.get().navigate(Routes.RENT_FORM);
+                });
+
+                // Tombol Edit
+                editButton.setStyle("-fx-background-color: #b9b9b9ff; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 6 12 6 12;");
+                editButton.setOnAction(e -> {
+                    VehicleBase vehicle = getTableView().getItems().get(getIndex());
+                    AppContext.get().setSelectedVehicleId(vehicle.getId());
+                    Router.get().navigate(Routes.VEHICLE_FORM);
+                });
+
+                // Tombol Edit hanya untuk admin saja
+                editButton.visibleProperty().bind(AppContext.get().currentAdminProperty().isNotNull());
+                editButton.managedProperty().bind(editButton.visibleProperty());
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getIndex() < 0) {
+                    setGraphic(null);
+                } else {
+                    VehicleBase vehicle = getTableView().getItems().get(getIndex());
+                    // Sembunyikan tombol Sewa jika kendaraan tidak tersedia (disewa atau booked)
+                    boolean isUnavailable = rentedIds.contains(vehicle.getId()) || bookedIds.contains(vehicle.getId());
+                    rentButton.setVisible(!isUnavailable);
+                    rentButton.setManaged(!isUnavailable);
+                    setGraphic(container);
+                }
+            }
+        });
 
         // Muat data kendaraan dari AppContext
-        List<VehicleBase> vehicles = AppContext.get().vehicles().getAll();
+        vehicleTable.getColumns().setAll(nameCol, plateCol, typeCol, rateCol, specificCol1, specificCol2, transmissionCol, availabilityCol, actionCol);
         ObservableList<VehicleBase> items = FXCollections.observableArrayList(vehicles);
         vehicleTable.setItems(items);
+
+        // Warnai baris yang sedang disewa atau booked menjadi abu-abu
+        vehicleTable.setRowFactory(tv -> new TableRow<VehicleBase>() {
+            @Override
+            protected void updateItem(VehicleBase item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setStyle("");
+                } else if (rentedIds.contains(item.getId()) || bookedIds.contains(item.getId())) {
+                    // Untuk baris yang tidak tersedia (disewa/booked), buat seleksi terlihat sama dengan unselected
+                    setStyle("-fx-background-color: #e8e8e8; -fx-selection-bar: #e8e8e8; -fx-selection-bar-non-focused: #e8e8e8;");
+                } else {
+                    // Untuk baris yang tersedia, gunakan warna ungu untuk seleksi
+                    setStyle("-fx-selection-bar: #9990C9; -fx-selection-bar-non-focused: #9990C9;");
+                }
+            }
+        });
+    }
+
+    /**
+     * Muat ulang data kendaraan dari database (dipanggil setelah perubahan data rental)
+     */
+    public void refresh() {
+        vehicleTable.getColumns().clear();
+        vehicleTable.getItems().clear();
+        loadVehicles();
     }
 }

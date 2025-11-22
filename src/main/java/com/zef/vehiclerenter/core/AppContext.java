@@ -10,6 +10,8 @@ import org.jooq.DSLContext;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import javax.sql.DataSource;
 
@@ -28,8 +30,34 @@ public final class AppContext {
     // Menampung data admin yang sedang login (jika ada) sebagai property agar bisa di-bind di UI
     private final ObjectProperty<Admin> currentAdmin = new SimpleObjectProperty<>(null);
 
+    // Menampung ID kendaraan yang dipilih untuk disewa
+    private final ObjectProperty<java.util.UUID> selectedVehicleId = new SimpleObjectProperty<>(null);
+
+    // Trigger untuk memaksa UI me-refresh data
+    private final IntegerProperty dataVersionProperty = new SimpleIntegerProperty(0);
+
     private void setCurrentAdmin(Admin admin) {
         this.currentAdmin.set(admin);
+    }
+
+    public java.util.UUID getSelectedVehicleId() {
+        return selectedVehicleId.get();
+    }
+
+    public void setSelectedVehicleId(java.util.UUID id) {
+        this.selectedVehicleId.set(id);
+    }
+
+    public ObjectProperty<java.util.UUID> selectedVehicleIdProperty() {
+        return selectedVehicleId;
+    }
+
+    public javafx.beans.property.IntegerProperty dataVersionProperty() {
+        return dataVersionProperty;
+    }
+
+    public void notifyDataChanged() {
+        dataVersionProperty.set(dataVersionProperty.get() + 1);
     }
 
     public Admin getCurrentAdmin() {

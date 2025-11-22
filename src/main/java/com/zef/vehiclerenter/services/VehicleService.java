@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.zef.vehiclerenter.jooq.tables.Vehicles.VEHICLES;
-
 public class VehicleService {
     private final DSLContext db;
 
