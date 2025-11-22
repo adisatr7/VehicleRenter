@@ -188,7 +188,7 @@ public class VehiclesController {
                 });
 
                 // Tombol Edit
-                editButton.setStyle("-fx-background-color: #b9b9b9ff; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 6 12 6 12;");
+                editButton.setStyle("-fx-background-color: #7b7b7bff; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 6 12 6 12;");
                 editButton.setOnAction(e -> {
                     VehicleBase vehicle = getTableView().getItems().get(getIndex());
                     AppContext.get().setSelectedVehicleId(vehicle.getId());

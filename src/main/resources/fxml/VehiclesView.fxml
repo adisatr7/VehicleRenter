@@ -25,7 +25,7 @@
         <HBox spacing="12.0" alignment="CENTER_LEFT">
           <children>
             <Button fx:id="addVehicleButton" text="Tambah Kendaraan" style="-fx-background-color: #2E294E; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16 8 16; -fx-font-weight: bold;"/>
-            <Button fx:id="refreshButton" text="Refresh" style="-fx-background-color: #b9b9b9ff; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16 8 16;"/>
+            <Button fx:id="refreshButton" text="Refresh" style="-fx-background-color: #7b7b7bff; -fx-background-radius: 6; -fx-cursor: hand; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 16 8 16;"/>
           </children>
         </HBox>
         <Separator prefWidth="200.0">
